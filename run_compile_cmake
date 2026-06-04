@@ -12,7 +12,7 @@
 set -euo pipefail
 
 program_name='cmake'
-program_version_number='3.31.11'
+program_version_number='4.3.2'
 program_src_file="v${program_version_number}.tar.gz"
 #program_src_file='cmake-3.31.11.tar.gz'
 program_version="cmake-${program_version_number}"
@@ -89,9 +89,9 @@ echo ""
 # ------------------------------------------------------------
 if [ ! "$PWD" = "$build_path" ]; then
     echo "------------------------------------------------------------"
-    echo "you are NOT in the build path.  CWD & build_path should be the same."
-    echo "build_path       = "${build_path}
-    echo "cwd              = "${PWD}
+    echo "⚠️ You are NOT in the build path.  CWD & build_path should be the same. ⚠️"
+    echo "build_path: "${build_path}
+    echo "cwd:        "${PWD}
     echo "------------------------------------------------------------"
     exit 1
 fi
