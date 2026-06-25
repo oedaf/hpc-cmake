@@ -1,0 +1,120 @@
+
+
+# file: source_common_setup 
+# run_00_compile_modules
+#
+# MIT License
+# Copyright (c) 2026 Open EDA Framework
+# SPDX-License-Identifier: MIT
+# See LICENSE.txt file for full license text
+
+# ------------------------------------------------------------
+# --- configuration ------------------------------------------
+
+program_name='cmake'
+program_version_number='3.31.11'
+program_version_name="cmake-${program_version_number}"
+arch='x86_64_v2'
+nproc=${BUILD_NPROC:-1}
+
+# will load this module
+module_tools_prefix='tools'
+gcc_version_number='15.2.0-x86-64-v2'
+gcc_version_name="gcc-${gcc_version_number}"
+
+running_script_name=$(basename $0)
+
+# ------------------------------------------------------------
+# --- path setup ---------------------------------------------
+build_path=$(  echo "${TOOLS_ADMIN}/build/${tools_hier_extra}/${arch}/${DISTRO}/${program_name}/${program_version_name}" | tr -s '/')
+target_path=$( echo "${TOOLS_TARGET}/${tools_hier_extra}/${arch}/${DISTRO}/${program_name}/${program_version_name}"      | tr -s '/')
+
+# ------------------------------------------------------------
+# --- various src/untar/compile paths ------------------------
+log_path="${build_path}/logs/${running_script_name}"
+
+program_src_file="${program_version_name}.tar.gz"
+program_untar_dir="${program_version_name}"
+program_src_pathfile="${TOOLS_ADMIN}/download/${program_name}/${program_src_file}"
+program_untar_path="${build_path}/$program_untar_dir"
+program_compile_path="${build_path}/compile"
+
+
+# ------------------------------------------------------------
+# --- ensure we're in proper build path ----------------------
+if [[ "$(pwd)" != "$build_path" ]]; then
+    {
+        echo "You are NOT in the build path."
+        echo "CWD & build_path should be the same."
+        echo "    build_path = ${build_path}"
+        echo "    cwd        = $(pwd)"
+        echo "------------------------------------------------------------"
+    }
+    exit 1
+fi
+
+
+# ------------------------------------------------------------
+# --- create necessary directories ---------------------------
+if [[ ! -d "${log_path}" ]]; then
+    echo "creating log path: ${log_path}"
+    mkdir -p "${log_path}"
+fi
+
+if [[ ! -d "${program_compile_path}" ]]; then
+    echo "creating log path: ${log_path}"
+    mkdir -p "${log_path}"
+fi
+
+
+# ------------------------------------------------------------
+# --- log build vars for debugging ---------------------------
+{
+    echo "------------------------------------------------------------"
+    echo "Modules Build - Variables"
+    echo "------------------------------------------------------------"
+    echo "program_name            = ${program_name}"
+    echo "program_version_name    = ${program_version_name}"
+    echo "program_version_number  = ${program_version_number}"
+    echo "nproc                   = ${nproc}"
+    echo "gcc_version_number      = ${gcc_version_number}"
+    echo "gcc_version_name        = ${gcc_version_name}"
+    echo "running_script_name     = ${running_script_name}"
+    echo "------------------------------------------------------------"
+    echo "TOOLS_ADMIN             = ${TOOLS_ADMIN}"
+    echo "TOOLS_TARGET            = ${TOOLS_TARGET}"
+    echo "tools_hier_extra        = ${tools_hier_extra}"
+    echo "arch                    = ${arch}"
+    echo "DISTRO                  = ${DISTRO}"
+    echo "------------------------------------------------------------"
+    echo "build_path              = ${build_path}"
+    echo "target_path             = ${target_path}"
+    echo "log_path                = ${log_path}"
+    echo "------------------------------------------------------------"
+    echo "program_src_file        = ${program_src_file}"
+    echo "program_untar_dir       = ${program_untar_dir}"
+    echo "program_src_pathfile    = ${program_src_pathfile}"
+    echo "program_untar_path      = ${program_untar_path}"
+    echo "program_compile_path    = ${program_compile_path}"
+    echo "------------------------------------------------------------"
+} | tee "$log_path/build_vars.log"
+
+
+# ------------------------------------------------------------
+# --- check build/target for spaces --------------------------
+check_for_improper_path "${build_path}"  "build_path"
+check_for_improper_path "${target_path}" "target_path"
+
+
+# ------------------------------------------------------------
+# --- load modules -------------------------------------------
+module purge
+
+gcc_module_path=$( echo "${module_tools_prefix}/gcc/${gcc_version_number}" )
+
+module load $gcc_module_path
+
+{
+    module list
+} 2>&1 | tee ${log_path}/module_list.log
+
