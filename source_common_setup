@@ -13,14 +13,16 @@
 
 program_name='cmake'
 program_version_number='3.31.11'
-program_version_name="cmake-${program_version_number}"
 arch='x86_64_v2'
 nproc=${BUILD_NPROC:-1}
 
 # will load this module
 module_tools_prefix='tools'
-gcc_version_number='15.2.0-x86-64-v2'
+gcc_version_number='13.2.0-x86-64-v2'
 gcc_version_name="gcc-${gcc_version_number}"
+
+program_version_name="cmake-${program_version_number}-${gcc_version_name}"
+
 
 running_script_name=$(basename $0)
 
@@ -33,8 +35,8 @@ target_path=$( echo "${TOOLS_TARGET}/${tools_hier_extra}/${arch}/${DISTRO}/${pro
 # --- various src/untar/compile paths ------------------------
 log_path="${build_path}/logs/${running_script_name}"
 
-program_src_file="${program_version_name}.tar.gz"
-program_untar_dir="${program_version_name}"
+program_src_file="${program_name}-${program_version_number}.tar.gz"
+program_untar_dir=$(echo ${program_src_file} | sed -e "s/\.tar\.gz//")
 program_src_pathfile="${TOOLS_ADMIN}/download/${program_name}/${program_src_file}"
 program_untar_path="${build_path}/$program_untar_dir"
 program_compile_path="${build_path}/compile"
