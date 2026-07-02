@@ -18,7 +18,7 @@ nproc=${BUILD_NPROC:-1}
 
 # will load this module
 module_tools_prefix='tools'
-gcc_version_number='15.2.0-x86-64-v2'
+gcc_version_number='13.2.0-x86-64-v2'
 gcc_version_name="gcc-${gcc_version_number}"
 
 program_version_name="cmake-${program_version_number}-${gcc_version_name}"
